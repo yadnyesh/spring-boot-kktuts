@@ -22,15 +22,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    Object target;
-
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Async
     public CompletableFuture<List<User>> saveUser(MultipartFile file) throws Exception {
         long starTime = System.currentTimeMillis();
         List<User> users = parseCSVFile(file);
-        logger.info("Saving {} of users in the DB", users.size() + Thread.currentThread().getName());
+        logger.info("Saving {} {} of users in the DB", users.size(), Thread.currentThread().getName());
         userRepository.saveAll(users);
         long endTime = System.currentTimeMillis();
         logger.info("Total time to save all the records {}", (endTime - starTime));
@@ -41,6 +39,7 @@ public class UserService {
     public CompletableFuture<List<User>> findAllUsers() {
         logger.info("Fetch all the users by thread:- {}", Thread.currentThread().getName());
         List<User> users = (List<User>) userRepository.findAll();
+        logger.info("Total number of users:- {}", users.size());
         return CompletableFuture.completedFuture(users);
     }
 
